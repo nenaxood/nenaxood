@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield - Кибербезопасность</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth-check.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="index.html"><img src="images/logo.png" alt="CyberShield Logo" class="logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="#services">Услуги</a></li>
+                <li><a href="#about">О нас</a></li>
+                <li><a href="#contact">Контакты</a></li>
+                <li id="auth-link"><a href="login.html">Вход</a></li>
+                <li id="account-link" style="display:none;"><a href="personalaccount.html">Личный кабинет</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Защитите свой бизнес от киберугроз</h2>
+            <p>Профессиональные услуги кибербезопасности для компаний любого масштаба</p>
+            <a href="register.html" class="cta-button">Начать защиту</a>
+        </section>
+
+        <section id="services" class="services">
+            <h2>Наши услуги</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>Аудит безопасности</h3>
+                    <p>Полная проверка вашей ИТ-инфраструктуры на уязвимости</p>
+                </div>
+                <div class="service-card">
+                    <h3>Защита от DDoS</h3>
+                    <p>Многоуровневая защита от распределённых атак</p>
+                </div>
+                <div class="service-card">
+                    <h3>Обучение сотрудников</h3>
+                    <p>Повышение осведомлённости о киберугрозах</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>Почему выбирают нас?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Комплексная защита</h3>
+                    <p>Полный цикл услуг по кибербезопасности от аудита до круглосуточного мониторинга</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Современные технологии</h3>
+                    <p>Используем только проверенные решения от мировых лидеров в области защиты данных</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍💻</div>
+                    <h3>Экспертный подход</h3>
+                    <p>Наша команда - сертифицированные специалисты с опытом работы в международных проектах</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2>Готовы начать?</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Контакты</h3>
+                    <p><strong>Email:</strong> security@cybershield.com</p>
+                    <p><strong>Телефон:</strong> +7 (XXX) XXX-XX-XX</p>
+                    <p><strong>Адрес:</strong> Москва, ул. Кибербезопасности, 42</p>
+                </div>
+                <div class="contact-form">
+                    <h3>Оставьте заявку</h3>
+                    <form id="contactForm">
+                        <input type="text" placeholder="Ваше имя" required>
+                        <input type="email" placeholder="Email" required>
+                        <textarea placeholder="Ваше сообщение" required></textarea>
+                        <button type="submit" class="cta-button">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 CyberShield. Все права защищены.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация | CyberShield</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box glow-effect">
+            <div class="logo-header">
+                <img src="images/logo.png" alt="CyberShield Logo" class="logo-small">
+                <h2>Создание аккаунта</h2>
+            </div>
+            
+            <form id="register-form">
+                <div class="input-group">
+                    <label for="name">Имя</label>
+                    <input type="text" id="name" placeholder="Введите ваше имя" required>
+                    <div class="input-icon"><i class="icon-user"></i></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="example@domain.com" required>
+                    <div class="input-icon"><i class="icon-email"></i></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="Не менее 8 символов" required>
+                    <div class="input-icon"><i class="icon-lock"></i></div>
+                    <div class="password-strength">
+                        <div class="strength-bar"></div>
+                        <span class="strength-text">Сложность пароля</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="confirm-password">Подтверждение пароля</label>
+                    <input type="password" id="confirm-password" placeholder="Повторите пароль" required>
+                    <div class="input-icon"><i class="icon-lock"></i></div>
+                </div>
+                
+                <div class="terms-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">Я принимаю <a href="#">условия использования</a> и <a href="#">политику конфиденциальности</a></label>
+                </div>
+                
+                <button type="submit" class="auth-button pulse-effect">
+                    <span class="button-text">Зарегистрироваться</span>
+                    <span class="button-icon">→</span>
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Уже есть аккаунт? <a href="login.html" class="highlight-link">Войдите</a></p>
+            </div>
+        </div>
+        
+        <div class="auth-decoration">
+            <div class="decoration-circle circle-1"></div>
+            <div class="decoration-circle circle-2"></div>
+            <div class="decoration-circle circle-3"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+        // Конфигурация Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyD5mO4vklYYsY8ts7vbwXNromqSqtncM",
+            authDomain: "webproject-4a8e1.firebaseapp.com",
+            databaseURL: "https://webproject-4a8e1-default-rtdb.firebaseio.com",
+            projectId: "webproject-4a8e1",
+            storageBucket: "webproject-4a8e1.firebasestorage.app",
+            messagingSenderId: "934208444740",
+            appId: "1:934208444740:web:e001b8e3da10809671df11",
+            measurementId: "G-W4FFGKRXR2"
+        };
+
+        // Инициализация Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        // Обработка регистрации
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // Валидация
+            if (password !== confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Пароли не совпадают!',
+                });
+                return;
+            }
+            
+            if (password.length < 8) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Пароль должен содержать минимум 8 символов!',
+                });
+                return;
+            }
+            
+            try {
+                // Создание пользователя в Authentication
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Сохранение дополнительных данных в Realtime Database
+                await set(ref(database, 'users/' + user.uid), {
+                    name: name,
+                    email: email,
+                    role: 'user',
+                    createdAt: new Date().toISOString()
+                });
+                
+                // Успешная регистрация
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Успех!',
+                    text: 'Регистрация завершена успешно!',
+                }).then(() => {
+                    window.location.href = 'personalaccount.html';
+                });
+                
+            } catch (error) {
+                console.error('Ошибка регистрации:', error);
+                let errorMessage = 'Произошла ошибка при регистрации';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Этот email уже зарегистрирован';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Некорректный email';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Пароль слишком слабый';
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: errorMessage,
+                });
+            }
+        });
+        
+        // Индикатор сложности пароля
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.querySelector('.strength-bar');
+            const strengthText = document.querySelector('.strength-text');
+            
+            let strength = 0;
+            if (password.length > 0) strength += 1;
+            if (password.length >= 8) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            const colors = ['#ff0000', '#ff5e00', '#ffbb00', '#a0ff00', '#00ff00'];
+            const texts = ['Очень слабый', 'Слабый', 'Средний', 'Сильный', 'Очень сильный'];
+            
+            strengthBar.style.width = `${strength * 20}%`;
+            strengthBar.style.backgroundColor = colors[strength - 1];
+            strengthText.textContent = texts[strength - 1] || '';
+        });
+    </script>
+</body>
+</html>

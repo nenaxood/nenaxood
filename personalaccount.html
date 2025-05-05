@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - CyberShield</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth-check.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="index.html"><img src="images/logo.png" alt="CyberShield Logo" class="logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="#services">Услуги</a></li>
+                <li><a href="#about">О нас</a></li>
+                <li><a href="#contact">Контакты</a></li>
+                <li id="auth-link"><a href="login.html">Вход</a></li>
+                <li id="account-link" style="display:none;"><a href="personalaccount.html">Личный кабинет</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="account-container">
+        <h2>Личный кабинет</h2>
+        <div class="account-info">
+            <div id="user-info">
+                <p>Загрузка данных...</p>
+            </div>
+            <div class="account-actions">
+                <h3>Действия</h3>
+                <button id="change-password">Изменить пароль</button>
+                <button id="delete-account">Удалить аккаунт</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 CyberShield. Все права защищены.</p>
+    </footer>
+
+    <script src="js/firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user data
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    db.collection('users').doc(user.uid).get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                const userData = doc.data();
+                                document.getElementById('user-info').innerHTML = `
+                                    <h3>${userData.name}</h3>
+                                    <p>Email: ${user.email}</p>
+                                    <p>Роль: ${userData.role}</p>
+                                    <p>Дата регистрации: ${new Date(userData.createdAt?.toDate()).toLocaleDateString()}</p>
+                                `;
+                            }
+                        });
+                }
+            });
+
+            // Logout
+            document.getElementById('logout-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                auth.signOut().then(() => {
+                    window.location.href = 'index.html';
+                });
+            });
+
+            // Change password
+            document.getElementById('change-password').addEventListener('click', () => {
+                const newPassword = prompt('Введите новый пароль:');
+                if (newPassword) {
+                    auth.currentUser.updatePassword(newPassword)
+                        .then(() => alert('Пароль успешно изменён!'))
+                        .catch(error => alert(error.message));
+                }
+            });
+
+            // Delete account
+            document.getElementById('delete-account').addEventListener('click', () => {
+                if (confirm('Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.')) {
+                    auth.currentUser.delete()
+                        .then(() => {
+                            alert('Аккаунт успешно удалён');
+                            window.location.href = 'index.html';
+                        })
+                        .catch(error => alert(error.message));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
